@@ -18,7 +18,7 @@
 metadata {
     definition (name: "Somfy MyLink Shade", namespace: "defunctzombie.somfy.mylink", author: "") {
         capability "Window Shade"
-
+        capability "Switch"
         command "stop"
     }
 
@@ -119,6 +119,17 @@ def close() {
     
     triggerClose()
 }
+
+//Map switch commands to window shade commands - mimic delayed assumption of event completion like open()/close() rather than event driven
+def on(){ 
+    open() 
+    runInMillis(moveTimeMillis, updateState, [overwrite: false, data: [name: "switch", value: "on"]])
+}
+def off(){ 
+    close() 
+    runInMillis(moveTimeMillis, updateState, [overwrite: false, data: [name: "switch", value: "off"]])
+}
+//end switch to shade command mapping
 
 def presetPosition() {
     log.debug("PresetPosition")
